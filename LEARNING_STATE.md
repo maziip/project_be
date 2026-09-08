@@ -40,7 +40,7 @@
   - 결과: `git version 2.50.1 (Apple Git-155)`
 - 항목: 저장소 생성과 운영 파일 생성
   - commit 또는 파일: 첫 commit (`VERSIONS.md`, `LEARNING_STATE.md`, 커리큘럼 사본, `.gitignore`, `.env.example`)
-  - 결과: 로컬 commit 완료. 원격 push는 학습자가 수행
+  - 결과: 로컬 commit 완료. 학습자가 `gh auth login`(HTTPS, 계정 maziip) 후 push. `git log origin/main` = `f462315` 확인 (2026-09-08)
 
 ## 실패한 테스트와 미해결 결함
 
@@ -65,7 +65,7 @@
 
 ## 다음 행동
 
-1. `gh` CLI 설치와 `gh auth login` 후 `git push -u origin main`으로 첫 commit을 원격에 올린다.
+1. (완료) gh CLI 설치, 로그인, 첫 commit push.
 2. Docker Desktop을 설치하고 `docker version`, `docker compose version` 결과를 이 파일에 기록한다.
 3. MySQL 9.7 Docker Compose를 작성해 컨테이너를 기동하고 연결을 확인한다 (학습자가 먼저 작성 시도).
 4. 외부 LLM API 제공자·월 예산·호출 중단 기준을 결정해 이 파일에 기록한다.
