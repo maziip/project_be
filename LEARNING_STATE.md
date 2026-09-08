@@ -1,8 +1,8 @@
 # Learning State
 
-- 마지막 갱신: 2026-09-08 (MySQL Compose 확인)
-- 현재 주차: 시작 전 준비 (0주차)
-- 진행 중 티켓: 없음 (준비 완료 후 BE-001 시작)
+- 마지막 갱신: 2026-09-08 (준비 단계 종료)
+- 현재 주차: 시작 전 준비 완료 → 1주 차 진입 대기
+- 진행 중 티켓: 없음 (다음 세션 BE-001 시작)
 - 현재 월별 관문 상태: 미진행
 
 ## 시작 전 준비 점검표
@@ -20,7 +20,7 @@
 | MySQL Docker Compose 실행 확인 | 완료 | `docker/docker-compose.yml`. `docker compose ps` Up, 로그 `ready for connections. Version: '9.7.2' port: 3306`, 호스트 `nc -z localhost 3306` 성공, `SELECT VERSION()` = 9.7.2 (2026-09-08) |
 | .gitignore 및 환경변수 구성 | 완료 | `.gitignore`, `docker/.env.example`. `git check-ignore`로 `docker/.env` 제외 확인. compose는 `${VAR}`로만 참조 |
 | 원격 저장소·CI 결정 | 완료 | GitHub + GitHub Actions (BE-001A에서 구성) |
-| 외부 LLM API 계정·예산·중단 기준 | 미결정 | 5주 차 전까지 결정. 후보: Anthropic Claude API. 예산 상한과 중단 기준은 학습자가 정한다 |
+| 외부 LLM API 계정·예산·중단 기준 | 결정 완료 (계정은 5주 차 직전 생성) | 제공자: Anthropic Claude API. 월 예산 $20 (선결제 크레딧 $20, 자동 충전 끔, 콘솔 월 지출 한도 $20). 중단 기준: 누적 $16(80%) 도달 시 그달은 Mock Provider만 사용. 사용량 확인: 콘솔 Usage 페이지, 위치는 계정 생성 시 기록. 개발 기본 모델은 저가 등급(Haiku 4.5, $1/$5 per MTok) 사용. 가격 확인일 2026-09-08 |
 
 ## 완료한 항목과 증거
 
@@ -79,5 +79,5 @@
 1. (완료) gh CLI 설치, 로그인, 첫 commit push.
 2. (완료) Docker Desktop 설치와 결과 기록.
 3. (완료) MySQL 9.7 Docker Compose 작성·기동·연결 확인. `docker/docker-compose.yml` 커밋은 학습자가 수행.
-4. 외부 LLM API 제공자·월 예산·호출 중단 기준을 결정해 이 파일에 기록한다.
-5. 준비 완료 조건을 모두 충족하면 BE-001(Gradle 골격과 wrapper)로 진입한다.
+4. (완료) LLM API: Claude / 월 $20 / 80% Mock 전환. 계정·키 발급·한도 설정은 5주 차 직전(4주 차 금요일)에 수행.
+5. 시작 전 준비 완료. 다음 세션부터 1주 차 BE-001(Gradle 골격과 wrapper) 진입. 시작 전 학습자의 접근 방법과 테스트 계획을 먼저 질문한다.
