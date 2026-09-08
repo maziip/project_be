@@ -1,8 +1,8 @@
 # Learning State
 
-- 마지막 갱신: 2026-09-08 (준비 단계 종료)
+- 마지막 갱신: 2026-09-08 (세션 종료, BE-001 계획 확정)
 - 현재 주차: 시작 전 준비 완료 → 1주 차 진입 대기
-- 진행 중 티켓: 없음 (다음 세션 BE-001 시작)
+- 진행 중 티켓: BE-001 (계획 확정, 구현 미시작)
 - 현재 월별 관문 상태: 미진행
 
 ## 시작 전 준비 점검표
@@ -62,7 +62,8 @@
 - 도움을 받은 부분: 환경 점검 명령 실행, 공식 문서 기반 버전 조사, 운영 파일 템플릿 작성 (Tutor Agent, 2026-09-08)
 - 도움을 받은 부분: Compose 작성 시 YAML 맵/리스트 구분, 최상위 `volumes:` 문법(두 줄 예시 제공), 오류 메시지 위치 해석. 파일 자체는 학습자가 작성 (2026-09-08)
 - AI 없이 다시 설명하거나 구현 가능한지: 버전 선택 이유(Java 21 vs 25, MySQL 9.7)는 학습자가 VERSIONS.md를 보고 설명할 수 있어야 함. 다음 세션에서 확인 질문 예정
-- 확인 질문(다음 세션): named volume과 bind mount의 차이, `down`과 `down -v`의 차이, compose에서 `.env`를 읽는 위치, 최상위 `volumes:`가 맵인 이유
+- Docker 자기점검 결과 (2026-09-08, AI 없이 답변): 이미지/컨테이너 차이 ○, `down` 후 남는 것 ○(컨테이너 "종료"→"삭제"로 보정), 호스트/컨테이너 포트 ○, 재기동 명령 △(`docker start mysql`→`docker compose up -d`로 보정), `.env` 전달 경로 ✕(설명 제공: .env → compose 치환 → 컨테이너 환경변수 → entrypoint 첫 초기화). 다음 세션 재확인: 3번과 5번
+- 학습자 현재 상태: Gradle, Spring 모두 처음. 1주 차는 C#/Unity 비유(build.gradle≈.csproj, wrapper≈Unity Hub 버전 고정, Spring≈ASP.NET Core)로 설명 시작
 
 ## 평가 결과와 보충 과제
 
@@ -74,10 +75,17 @@
 
 - 없음
 
+## BE-001 계획 (학습자 동의, 2026-09-08)
+
+- 티켓: Gradle 애플리케이션 골격과 wrapper를 구성하고 명령행에서 빌드·테스트한다
+- 접근 방법: `brew install gradle`(1회) 후 `gradle init`으로 Java application 골격 생성, wrapper는 VERSIONS.md의 9.7.1로 고정. Spring은 넣지 않는다(2주 차)
+- 완료 증거: `./gradlew build` 출력의 `BUILD SUCCESSFUL`, `./gradlew test` 테스트 1개 이상 통과 출력, 두 출력을 이 파일에 기록. 브랜치 `BE-001`에서 작업 후 PR 설명 작성
+- 시작 전 확인할 것: `gradle init`이 만드는 파일 각각의 역할을 학습자가 설명할 수 있는지
+
 ## 다음 행동
 
 1. (완료) gh CLI 설치, 로그인, 첫 commit push.
 2. (완료) Docker Desktop 설치와 결과 기록.
 3. (완료) MySQL 9.7 Docker Compose 작성·기동·연결 확인. `docker/docker-compose.yml` 커밋은 학습자가 수행.
 4. (완료) LLM API: Claude / 월 $20 / 80% Mock 전환. 계정·키 발급·한도 설정은 5주 차 직전(4주 차 금요일)에 수행.
-5. 시작 전 준비 완료. 다음 세션부터 1주 차 BE-001(Gradle 골격과 wrapper) 진입. 시작 전 학습자의 접근 방법과 테스트 계획을 먼저 질문한다.
+5. 다음 세션: Docker 자기점검 3·5번 재확인(5분) → BE-001 브랜치 생성 → `brew install gradle` → `gradle init` → 생성 파일 역할 설명 → wrapper 버전 고정 → 빌드·테스트 증거 기록.
