@@ -1,6 +1,6 @@
 # Learning State
 
-- 마지막 갱신: 2026-09-08 (Docker 확인)
+- 마지막 갱신: 2026-09-08 (MySQL Compose 확인)
 - 현재 주차: 시작 전 준비 (0주차)
 - 진행 중 티켓: 없음 (준비 완료 후 BE-001 시작)
 - 현재 월별 관문 상태: 미진행
@@ -17,8 +17,8 @@
 | OpenSearch-Java client 호환성·벡터 검색 확인 | 부분 | client 3.x ↔ 서버 3.x 호환 확인. k-NN 플러그인 포함 여부는 컨테이너 기동 후 확인 |
 | 학습 저장소 생성 | 완료 | `/Users/dreadwitch/Documents/project_be`, origin `https://github.com/maziip/project_be.git` |
 | LEARNING_STATE.md 생성 | 완료 | 이 파일 |
-| MySQL Docker Compose 실행 확인 | 미완료 | Docker 설치 후 진행 |
-| .gitignore 및 환경변수 구성 | 완료(초안) | `.gitignore`, `.env.example` (값 없음). 실제 `.env`는 커밋 금지 |
+| MySQL Docker Compose 실행 확인 | 완료 | `docker/docker-compose.yml`. `docker compose ps` Up, 로그 `ready for connections. Version: '9.7.2' port: 3306`, 호스트 `nc -z localhost 3306` 성공, `SELECT VERSION()` = 9.7.2 (2026-09-08) |
+| .gitignore 및 환경변수 구성 | 완료 | `.gitignore`, `docker/.env.example`. `git check-ignore`로 `docker/.env` 제외 확인. compose는 `${VAR}`로만 참조 |
 | 원격 저장소·CI 결정 | 완료 | GitHub + GitHub Actions (BE-001A에서 구성) |
 | 외부 LLM API 계정·예산·중단 기준 | 미결정 | 5주 차 전까지 결정. 후보: Anthropic Claude API. 예산 상한과 중단 기준은 학습자가 정한다 |
 
@@ -38,6 +38,12 @@
 - 항목: Docker Desktop 설치
   - 실행 명령: `brew install --cask docker-desktop` 후 `docker version && docker compose version && docker run --rm hello-world`
   - 결과: `Server: Docker Desktop 4.90.0 (238679)`, Engine `29.7.2`, `Docker Compose version v5.5.1`, `Hello from Docker!`
+- 항목: MySQL 9.7 Docker Compose (학습자 직접 작성)
+  - commit 또는 파일: `docker/docker-compose.yml`, 볼륨 `docker_mysql_data`
+  - 결정: 태그 `mysql:9.7`(패치 자동 반영), 비밀번호는 `docker/.env` + `${VAR}` 참조, 호스트 포트 3306(`lsof -i :3306` 비어 있음 확인), named volume(초기 SQL 없음)
+  - 실행 명령: `cd docker && docker compose config && docker compose up -d && docker compose ps`, `docker compose logs mysql | grep "ready for connections"`, `docker compose exec mysql mysql -uroot -p -e "SELECT VERSION();"`
+  - 결과: `docker-mysql-1 mysql:9.7 Up ... 0.0.0.0:3306->3306/tcp`, `ready for connections. Version: '9.7.2' ... port: 3306`, `VERSION() = 9.7.2`
+  - 겪은 오류와 원인: `no configuration file` (파일 미생성) → `empty compose file` → `services.ports must be a mapping` (서비스 이름 단계 누락) → `volumes must be a mapping` (최상위 volumes를 리스트로 작성) → `services.mysql.volumes must be a array` (엉뚱한 volumes 수정) → `services.volumes additional properties` (최상위 volumes 들여쓰기) → 통과
 - 항목: Git 확인
   - 실행 명령: `git --version`
   - 결과: `git version 2.50.1 (Apple Git-155)`
@@ -54,7 +60,9 @@
 ## AI 도움 기록
 
 - 도움을 받은 부분: 환경 점검 명령 실행, 공식 문서 기반 버전 조사, 운영 파일 템플릿 작성 (Tutor Agent, 2026-09-08)
+- 도움을 받은 부분: Compose 작성 시 YAML 맵/리스트 구분, 최상위 `volumes:` 문법(두 줄 예시 제공), 오류 메시지 위치 해석. 파일 자체는 학습자가 작성 (2026-09-08)
 - AI 없이 다시 설명하거나 구현 가능한지: 버전 선택 이유(Java 21 vs 25, MySQL 9.7)는 학습자가 VERSIONS.md를 보고 설명할 수 있어야 함. 다음 세션에서 확인 질문 예정
+- 확인 질문(다음 세션): named volume과 bind mount의 차이, `down`과 `down -v`의 차이, compose에서 `.env`를 읽는 위치, 최상위 `volumes:`가 맵인 이유
 
 ## 평가 결과와 보충 과제
 
@@ -70,6 +78,6 @@
 
 1. (완료) gh CLI 설치, 로그인, 첫 commit push.
 2. (완료) Docker Desktop 설치와 결과 기록.
-3. MySQL 9.7 Docker Compose를 작성해 컨테이너를 기동하고 연결을 확인한다 (학습자가 먼저 작성 시도).
+3. (완료) MySQL 9.7 Docker Compose 작성·기동·연결 확인. `docker/docker-compose.yml` 커밋은 학습자가 수행.
 4. 외부 LLM API 제공자·월 예산·호출 중단 기준을 결정해 이 파일에 기록한다.
 5. 준비 완료 조건을 모두 충족하면 BE-001(Gradle 골격과 wrapper)로 진입한다.
