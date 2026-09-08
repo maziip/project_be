@@ -8,7 +8,7 @@
 | MySQL | 9.7 LTS (Docker `mysql:9.7`) | https://www.mysql.com/support/supportedplatforms/database.html, https://hub.docker.com/_/mysql (`lts` 태그 = 9.7.2) | 현재 LTS. 8.4도 LTS이나 최신 LTS 선택(학습자 결정) | 2026-09-08 |
 | OpenSearch | 3.7.0 | https://opensearch.org/releases/ (2026-06-09, 3.x = Current, 2.x = Maintenance) | 공식 지원 중인 최신 안정 버전 | 2026-09-08 |
 | opensearch-java client | 3.x (문서 예시 3.9.0) | https://docs.opensearch.org/latest/clients/java/, https://github.com/opensearch-project/opensearch-java/blob/main/COMPATIBILITY.md | 3.x 클라이언트는 서버 1.x~3.x 호환 | 2026-09-08 |
-| Docker / Compose | 미설치 (설치 후 기록) | https://docs.docker.com/desktop/setup/install/mac-install/ | 로컬 MySQL·OpenSearch 실행 | - |
+| Docker / Compose | Docker Desktop 4.90.0 (Engine 29.7.2, Compose v5.5.1) | https://docs.docker.com/desktop/setup/install/mac-install/ | 로컬 MySQL·OpenSearch 실행 | 2026-09-08 |
 
 ## 미확인 항목
 
