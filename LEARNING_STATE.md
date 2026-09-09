@@ -1,8 +1,8 @@
 # Learning State
 
-- 마지막 갱신: 2026-09-08 (세션 종료, BE-001 계획 확정)
-- 현재 주차: 시작 전 준비 완료 → 1주 차 진입 대기
-- 진행 중 티켓: BE-001 (계획 확정, 구현 미시작)
+- 마지막 갱신: 2026-09-09 (세션 종료, BE-001 리뷰 반영 완료·병합 대기)
+- 현재 주차: 1주 차 (2일차 종료)
+- 진행 중 티켓: BE-001 (PR #1 병합 대기), 다음 BE-001A
 - 현재 월별 관문 상태: 미진행
 
 ## 시작 전 준비 점검표
@@ -53,9 +53,7 @@
 
 ## 실패한 테스트와 미해결 결함
 
-- 증상: 없음 (코드 없음)
-- 현재 가설: -
-- 다음 확인: -
+- 없음. PR 설명 `docs/pr/BE-001.md` 25행 오타 "21f로" → "21로" (사소, 내일 수정)
 
 ## AI 도움 기록
 
@@ -63,6 +61,11 @@
 - 도움을 받은 부분: Compose 작성 시 YAML 맵/리스트 구분, 최상위 `volumes:` 문법(두 줄 예시 제공), 오류 메시지 위치 해석. 파일 자체는 학습자가 작성 (2026-09-08)
 - AI 없이 다시 설명하거나 구현 가능한지: 버전 선택 이유(Java 21 vs 25, MySQL 9.7)는 학습자가 VERSIONS.md를 보고 설명할 수 있어야 함. 다음 세션에서 확인 질문 예정
 - Docker 자기점검 결과 (2026-09-08, AI 없이 답변): 이미지/컨테이너 차이 ○, `down` 후 남는 것 ○(컨테이너 "종료"→"삭제"로 보정), 호스트/컨테이너 포트 ○, 재기동 명령 △(`docker start mysql`→`docker compose up -d`로 보정), `.env` 전달 경로 ✕(설명 제공: .env → compose 치환 → 컨테이너 환경변수 → entrypoint 첫 초기화). 다음 세션 재확인: 3번과 5번
+- 2026-09-09 BE-001: 튜터가 제공한 것 — Gradle/wrapper/DSL 개념(C# 비유), `gradle init` 선택지 표, `git status --short` 읽는 법, 최상위 파일 역할 정답, mainClass 오류 원인 지목(수정은 학습자), Guava 제거 위치, 패키지 변경 명령. 학습자가 직접 한 것 — 모든 명령 실행, 파일 편집, 테스트 깨뜨리기·복구, PR 설명 작성(2회 재작성), 리뷰 반영 2건
+- 2026-09-09 Docker 자기점검 재확인: 3번(.env 전달 경로)·5번(재기동) 모두 본인 말로 정답. 통과
+- 2026-09-09 `gradle init` 파일 역할 추측: settings(△→.sln), build.gradle.kts(○), wrapper.properties(△→ProjectVersion.txt), libs.versions.toml(○), gradlew(△→wrapper 스크립트)
+- 2026-09-09 Java 문법 자가 설명: package≈namespace ○, main/println ○, import≈using ○, import static≈using static(설명 후 이해), @Test≈[Test] 어트리뷰트(설명 후 이해)
+- 2026-09-09 겪은 일: `--scan` 실행으로 빌드 메타데이터가 gradle.com에 1회 업로드됨(약관 동의). 샘플 코드라 민감정보 없음. 이후 미사용 결정. PR 설명 1차본에 튜터 안내문을 그대로 붙여넣음 → 본인 문장으로 재작성 요구 → 2차·3차 수정으로 해결
 - 학습자 현재 상태: Gradle, Spring 모두 처음. 1주 차는 C#/Unity 비유(build.gradle≈.csproj, wrapper≈Unity Hub 버전 고정, Spring≈ASP.NET Core)로 설명 시작
 
 ## 평가 결과와 보충 과제
@@ -82,10 +85,20 @@
 - 완료 증거: `./gradlew build` 출력의 `BUILD SUCCESSFUL`, `./gradlew test` 테스트 1개 이상 통과 출력, 두 출력을 이 파일에 기록. 브랜치 `BE-001`에서 작업 후 PR 설명 작성
 - 시작 전 확인할 것: `gradle init`이 만드는 파일 각각의 역할을 학습자가 설명할 수 있는지
 
+## BE-001 진행 기록 (2026-09-09)
+
+- 브랜치 `BE-001`, PR #1 https://github.com/maziip/project_be/pull/1
+- 환경: `brew install gradle`이 JDK 26을 동반 설치 → `JAVA_HOME`을 Temurin 21로 고정(~/.zshrc). toolchain(21) 설정으로 컴파일 JDK는 환경과 무관하게 21 고정 확인(튜터 실험: JAVA_HOME=26으로 빌드 → class major version 65)
+- `gradle init` 선택: Application / Java / 21 / project_be / Single / Kotlin DSL / JUnit Jupiter / new APIs no. wrapper 9.7.1, toolchain 21 자동 생성 확인
+- 증거: `./gradlew build` BUILD SUCCESSFUL(7 tasks), 테스트 결과 XML `tests="1" failures="0"`, `./gradlew run` → `Hello World!`. 테스트 고의 실패 실험: `BUILD FAILED`, `AssertionFailedError at AppTest.java:12`, HTML 리포트 확인 후 원복
+- 리뷰(docs/reviews/BE-001-review.md) 반영: 미사용 Guava 제거(commit 8180c60), 패키지 `org.example`→`knowledgeassistant`(같은 commit), PR 설명 보완(commit 1928900). 미반영: 없음. App.java 샘플은 BE-002에서 삭제 예정
+- commit: 3502290(골격), 8180c60(리뷰 반영), 1928900(PR 설명)
+
 ## 다음 행동
 
 1. (완료) gh CLI 설치, 로그인, 첫 commit push.
 2. (완료) Docker Desktop 설치와 결과 기록.
 3. (완료) MySQL 9.7 Docker Compose 작성·기동·연결 확인. `docker/docker-compose.yml` 커밋은 학습자가 수행.
 4. (완료) LLM API: Claude / 월 $20 / 80% Mock 전환. 계정·키 발급·한도 설정은 5주 차 직전(4주 차 금요일)에 수행.
-5. 다음 세션: Docker 자기점검 3·5번 재확인(5분) → BE-001 브랜치 생성 → `brew install gradle` → `gradle init` → 생성 파일 역할 설명 → wrapper 버전 고정 → 빌드·테스트 증거 기록.
+5. (완료) Docker 자기점검 재확인, BE-001 골격·리뷰 반영·PR 설명.
+6. 다음 세션: `docs/notes/2026-09-09.md` 빈칸 4개 채우기(5분) → PR 설명 오타 수정 → PR #1 병합(squash 여부 결정) → BE-001A: GitHub Actions에서 `./gradlew build` 실행, 실패 시 빨간불 확인(테스트 고의 실패로 검증). 시작 전 학습자에게 CI가 무엇인지, 어떤 이벤트에 돌릴지 질문
