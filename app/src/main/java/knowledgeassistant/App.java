@@ -5,8 +5,7 @@ package knowledgeassistant;
 
 public class App {
     public String getGreeting() {        
-        return null;
-        //return "Hello World!";
+        return "Hello World!";
     }
 
     public static void main(String[] args) {
