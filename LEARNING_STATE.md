@@ -1,8 +1,8 @@
 # Learning State
 
-- 마지막 갱신: 2026-09-10 (세션 시작, 3일차. PR #1 병합 대기 → BE-001A 예정)
-- 현재 주차: 1주 차 (2일차 종료)
-- 진행 중 티켓: BE-001 (PR #1 병합 대기), 다음 BE-001A
+- 마지막 갱신: 2026-09-10 (3일차 진행 중. PR #1 병합 완료, BE-001A CI 구성·검증 완료, PR 설명 작성 중)
+- 현재 주차: 1주 차 (3일차 진행 중)
+- 진행 중 티켓: BE-001A (PR #2, 설명 작성·리뷰·병합 남음), 다음 BE-002
 - 현재 월별 관문 상태: 미진행
 
 ## 시작 전 준비 점검표
@@ -93,6 +93,23 @@
 - 증거: `./gradlew build` BUILD SUCCESSFUL(7 tasks), 테스트 결과 XML `tests="1" failures="0"`, `./gradlew run` → `Hello World!`. 테스트 고의 실패 실험: `BUILD FAILED`, `AssertionFailedError at AppTest.java:12`, HTML 리포트 확인 후 원복
 - 리뷰(docs/reviews/BE-001-review.md) 반영: 미사용 Guava 제거(commit 8180c60), 패키지 `org.example`→`knowledgeassistant`(같은 commit), PR 설명 보완(commit 1928900). 미반영: 없음. App.java 샘플은 BE-002에서 삭제 예정
 - commit: 3502290(골격), 8180c60(리뷰 반영), 1928900(PR 설명)
+
+## BE-001A 진행 기록 (2026-09-10)
+
+- 브랜치 `BE-001A`, PR #2 https://github.com/maziip/project_be/pull/2
+- 시작 전 질문: CI 정의 → "코드 검증 시스템"(자동·매번 두 요소 보강 필요). 실행 이벤트 → "PR 열 때 + main 합칠 때", 이유 정확. wrapper가 있어 러너에 gradle 설치 불필요 → 모름, 설명 후 CI 로그 `Downloading .../gradle-9.7.1-bin.zip`로 확인
+- 파일: `.github/workflows/ci.yml`. `on: push/pull_request` 모두 `branches: ["main"]`. 잡 `build`, ubuntu-latest, 스텝 checkout@v6 → setup-java@v5(temurin 21) → `./gradlew build`. 뼈대는 튜터 제공, steps는 GitHub Docs 조각을 보고 학습자 작성
+- 증거: 1차 성공 35s(setup-java@v4, deprecated 경고 2건) → v5로 갱신 후 2차 성공 39s 경고 0 → 고의 실패 commit `e19d858` CI 실패(`AppTest > appHasAGreeting() FAILED`, `1 test completed, 1 failed`) → `git revert` commit `6e097f2` CI 성공
+- 병합 보호: Ruleset `main 보호`(id 22769159) Active, 대상 `~DEFAULT_BRANCH`, 규칙 pull_request(승인 0) + required_status_checks(`build`) + deletion + non_fast_forward. 1차 생성 시 대상 브랜치 누락(적용 규칙 0) → 수정 후 4개 적용 확인
+- 겪은 일: commit 없이 push 2회(아침 docs, 오후 ci.yml → "No commits between main and BE-001A"). add/commit/push를 "고르기/사진 찍기/보내기"로 정리. 한국어 GitHub Docs가 setup-java@v4로 구버전 안내 → 실제 실행 경고로 발견
+- 튜터 반성: "CI"를 첫날 결정만 기록하고 설명 안 함 → 오늘 처음부터 설명. 존재하지 않는 파일 경로를 링크로 제시해 혼란. 설명 밀도가 높다는 피드백 받고 1라운드/2라운드로 분할
+- 남은 것: `docs/pr/BE-001A.md` 작성 → Reviewer 리뷰 → 병합(일반 merge) → 오늘 일일 기록
+
+## 운영 규칙 추가 (2026-09-10)
+
+- 일일 기록의 "가설/실제 원인"은 오류가 아닌 개념 이해 문제일 때 "해당 없음 + 이유"로 쓴다. 빈칸으로 두지 않는다
+- "AI 답변을 검증한 방법"은 "무엇을 어떻게 돌려서 무엇을 봤다" 형태의 구체 행동 하나로 쓴다
+- PR 병합은 일반 merge. LEARNING_STATE와 리뷰 기록이 commit 해시를 증거로 가리키므로 squash하지 않는다
 
 ## 다음 행동
 
