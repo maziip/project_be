@@ -1,8 +1,8 @@
 # Learning State
 
-- 마지막 갱신: 2026-09-10 (세션 시작, 3일차. PR #1 병합 대기 → BE-001A 예정)
-- 현재 주차: 1주 차 (2일차 종료)
-- 진행 중 티켓: BE-001 (PR #1 병합 대기), 다음 BE-001A
+- 마지막 갱신: 2026-09-10 (세션 종료, 3일차. PR #1 병합 완료. BE-001A CI·병합 보호 완료, PR #2는 설명 보강 전이라 미병합)
+- 현재 주차: 1주 차 (3일차 종료)
+- 진행 중 티켓: BE-001A (PR #2 열림, 리뷰 반영·병합 남음), 다음 BE-002
 - 현재 월별 관문 상태: 미진행
 
 ## 시작 전 준비 점검표
@@ -94,6 +94,24 @@
 - 리뷰(docs/reviews/BE-001-review.md) 반영: 미사용 Guava 제거(commit 8180c60), 패키지 `org.example`→`knowledgeassistant`(같은 commit), PR 설명 보완(commit 1928900). 미반영: 없음. App.java 샘플은 BE-002에서 삭제 예정
 - commit: 3502290(골격), 8180c60(리뷰 반영), 1928900(PR 설명)
 
+## BE-001A 진행 기록 (2026-09-10)
+
+- 브랜치 `BE-001A`, PR #2 https://github.com/maziip/project_be/pull/2
+- 시작 전 질문: CI 정의 → "코드 검증 시스템"(자동·매번 두 요소 보강 필요). 실행 이벤트 → "PR 열 때 + main 합칠 때", 이유 정확. wrapper가 있어 러너에 gradle 설치 불필요 → 모름, 설명 후 CI 로그 `Downloading .../gradle-9.7.1-bin.zip`로 확인
+- 파일: `.github/workflows/ci.yml`. `on: push/pull_request` 모두 `branches: ["main"]`. 잡 `build`, ubuntu-latest, 스텝 checkout@v6 → setup-java@v5(temurin 21) → `./gradlew build`. 뼈대는 튜터 제공, steps는 GitHub Docs 조각을 보고 학습자 작성
+- 증거: 1차 성공 35s(setup-java@v4, deprecated 경고 2건) → v5로 갱신 후 2차 성공 39s 경고 0 → 고의 실패 commit `e19d858` CI 실패(`AppTest > appHasAGreeting() FAILED`, `1 test completed, 1 failed`) → `git revert` commit `6e097f2` CI 성공
+- 병합 보호: Ruleset `main 보호`(id 22769159) Active, 대상 `~DEFAULT_BRANCH`, 규칙 pull_request(승인 0) + required_status_checks(`build`) + deletion + non_fast_forward. 1차 생성 시 대상 브랜치 누락(적용 규칙 0) → 수정 후 4개 적용 확인
+- 겪은 일: commit 없이 push 2회(아침 docs, 오후 ci.yml → "No commits between main and BE-001A"). add/commit/push를 "고르기/사진 찍기/보내기"로 정리. 한국어 GitHub Docs가 setup-java@v4로 구버전 안내 → 실제 실행 경고로 발견
+- 튜터 반성: "CI"를 첫날 결정만 기록하고 설명 안 함 → 오늘 처음부터 설명. 존재하지 않는 파일 경로를 링크로 제시해 혼란. 설명 밀도가 높다는 피드백 받고 1라운드/2라운드로 분할
+- PR 설명 1차본 작성(commit `7cf61b9`). Reviewer 리뷰 `docs/reviews/BE-001A-review.md` 작성(Major 1: ①~③ 증거 부족, Question 1: ④가 학습 운영 질문). 학습자가 "내용을 아직 제대로 이해하지 못했다"는 이유로 오늘 반영을 중단하기로 결정. PR #2는 열어 둔 채 종료. 미병합
+- 학습자 질문(④에서): "시간적 여유가 얼마나 있는지", "이 방식으로 학습하는 게 맞는지". 튜터 답: 표준 일과 21:00 이후엔 새 단계 착수 대신 마무리를 우선 제안(금지 아님, 결정은 학습자). 방식 순서는 커리큘럼 고정, 설명 밀도·분량은 조정 가능. 질문의 의도(느림/어려움/효용 의심)를 내일 시작 시 한 줄로 확인
+
+## 운영 규칙 추가 (2026-09-10)
+
+- 일일 기록의 "가설/실제 원인"은 오류가 아닌 개념 이해 문제일 때 "해당 없음 + 이유"로 쓴다. 빈칸으로 두지 않는다
+- "AI 답변을 검증한 방법"은 "무엇을 어떻게 돌려서 무엇을 봤다" 형태의 구체 행동 하나로 쓴다
+- PR 병합은 일반 merge. LEARNING_STATE와 리뷰 기록이 commit 해시를 증거로 가리키므로 squash하지 않는다
+
 ## 다음 행동
 
 1. (완료) gh CLI 설치, 로그인, 첫 commit push.
@@ -101,4 +119,12 @@
 3. (완료) MySQL 9.7 Docker Compose 작성·기동·연결 확인. `docker/docker-compose.yml` 커밋은 학습자가 수행.
 4. (완료) LLM API: Claude / 월 $20 / 80% Mock 전환. 계정·키 발급·한도 설정은 5주 차 직전(4주 차 금요일)에 수행.
 5. (완료) Docker 자기점검 재확인, BE-001 골격·리뷰 반영·PR 설명.
-6. 다음 세션: `docs/notes/2026-09-09.md` 빈칸 4개 채우기(5분) → PR 설명 오타 수정 → PR #1 병합(squash 여부 결정) → BE-001A: GitHub Actions에서 `./gradlew build` 실행, 실패 시 빨간불 확인(테스트 고의 실패로 검증). 시작 전 학습자에게 CI가 무엇인지, 어떤 이벤트에 돌릴지 질문
+6. (완료) 일일 기록 빈칸, PR 설명 오타, PR #1 일반 merge, BE-001A CI 파일·실행 3회·Ruleset.
+7. 다음 세션(2026-09-11) 순서:
+   1. 학습자에게 ④ 질문의 의도 한 줄 확인. 어제 이해 못 했다고 한 부분이 무엇인지 확인(후보: 워크플로 파일 각 줄, PR 이벤트가 다시 도는 이유, Ruleset과 CI의 관계, wrapper)
+   2. 그 부분을 짧게 다시 설명하고 학습자가 본인 말로 되말하기
+   3. `docs/pr/BE-001A.md` ①~④를 리뷰대로 보강(본인 문장). `docs/reviews/BE-001A-review.md`와 함께 commit·push
+   4. CI 초록 확인 후 PR #2 일반 merge. 로컬 main 동기화
+   5. `docs/notes/2026-09-10.md` 빈칸 채우기
+   6. BE-002 착수 전 커리큘럼 1주 차 BE-002 조건 확인. 21:00 이후 새 단계 착수 제안 안 함
+   7. 보조자료 `docs/notes/1주차-도구-개념-정리.html/.pdf`(2026-09-10 밤 작성, 학습자 요청 "따라 하긴 했는데 익히지 못했다"). 끝의 확인 질문 10개를 학습자가 답한 뒤 튜터가 확인. 필수 항목: git add/commit/push 루프, 티켓 한 바퀴(gh), gradlew build 결과 읽기, YAML 규칙 4개
