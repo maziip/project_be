@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>1주 차 도구·개념 정리</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; font-size: 11pt; line-height: 1.65; color: #111; max-width: 180mm; margin: 0 auto; }
+  h1 { font-size: 20pt; margin: 0 0 4pt; border-bottom: 2px solid #111; padding-bottom: 6pt; }
+  .meta { color: #555; font-size: 9.5pt; margin-bottom: 18pt; }
+  h2 { font-size: 14pt; margin: 22pt 0 6pt; page-break-after: avoid; border-bottom: 1px solid #bbb; padding-bottom: 2pt; }
+  h3 { font-size: 12pt; margin: 14pt 0 4pt; page-break-after: avoid; }
+  p { margin: 0 0 8pt; }
+  ul, ol { margin: 0 0 8pt 0; padding-left: 18pt; }
+  li { margin-bottom: 3pt; }
+  code { font-family: Menlo, "SF Mono", monospace; font-size: 9.5pt; background: #f2f2f2; padding: 1px 4px; border-radius: 3px; }
+  pre { font-family: Menlo, "SF Mono", monospace; font-size: 9.5pt; background: #f2f2f2; padding: 8pt 10pt; border-radius: 4px; overflow-x: auto; page-break-inside: avoid; }
+  pre code { background: none; padding: 0; }
+  .box { border-left: 3px solid #333; background: #f7f7f7; padding: 8pt 10pt; margin: 10pt 0; page-break-inside: avoid; }
+  .must { border-left-color: #b00; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0 12pt; font-size: 10pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #999; padding: 5pt 7pt; text-align: left; vertical-align: top; }
+  th { background: #e9e9e9; white-space: nowrap; }
+  .tag { display: inline-block; font-size: 8.5pt; padding: 0 5pt; border-radius: 3px; border: 1px solid #999; margin-left: 4pt; vertical-align: middle; }
+  .tag.m { background: #ffe5e5; border-color: #c66; }
+  .tag.o { background: #eef; border-color: #88a; }
+  .q { page-break-inside: avoid; }
+  .q ol li { margin-bottom: 8pt; }
+  .memo { border: 1px dashed #999; height: 48pt; margin-top: 4pt; }
+  .small { font-size: 9.5pt; color: #444; }
+</style>
+</head>
+<body>
+
+<h1>1주 차 도구·개념 정리</h1>
+<div class="meta">3개월 자기주도 BE 전환 프로그램 · 1주 차(2026-09-08 ~ 09-10) 보조자료 · 백엔드 처음 시작하는 C#/Unity 개발자용</div>
+
+<p>이 문서는 이번 주 세션에서 "시키는 대로 따라 했지만 익히지는 못한" 것들을 다시 정리한 것이다. 새 내용은 없다. 전부 이번 주에 한 번 이상 실제로 손으로 친 것이다. 각 항목에 <span class="tag m">필수</span> 또는 <span class="tag o">알아두기</span> 표시를 붙였다. 필수는 다음 주부터 매일 쓰는 것이고, 알아두기는 "이런 게 있다"만 알면 되는 것이다.</p>
+
+<div class="box must"><b>이번 주에 배운 것을 한 문장으로.</b> 코드를 고치고(편집기) → 사진을 찍어 보내고(Git) → 남에게 보여 주고(GitHub PR) → 기계가 검사하고(CI) → 합친다(merge). 이 다섯 단계가 앞으로 매일 도는 루프다. 아래 모든 도구는 이 루프의 어느 한 칸에 속한다.</div>
+
+<table>
+<tr><th>단계</th><th>쓰는 도구</th><th>이번 주 실제로 한 것</th></tr>
+<tr><td>고친다</td><td>VS Code, 터미널</td><td><code>ci.yml</code>, <code>docker-compose.yml</code>, PR 설명 작성</td></tr>
+<tr><td>빌드·테스트한다</td><td>JDK, Gradle, JUnit</td><td><code>./gradlew build</code>, 테스트 일부러 깨뜨리기</td></tr>
+<tr><td>사진 찍어 보낸다</td><td>Git</td><td>add → commit → push, 브랜치, revert</td></tr>
+<tr><td>보여 준다</td><td>GitHub, gh</td><td>PR #1, #2 열기, 리뷰 반영, 병합</td></tr>
+<tr><td>기계가 검사한다</td><td>GitHub Actions</td><td>CI 초록·빨강 확인, main 보호 규칙</td></tr>
+<tr><td>DB를 띄운다</td><td>Docker, Compose</td><td>MySQL 9.7 컨테이너 (별도 문서 <code>docker-1단계-개념</code>)</td></tr>
+</table>
+
+<h2>1. 터미널 <span class="tag m">필수</span></h2>
+<p>맥의 기본 셸은 zsh다. 이번 주에 친 명령은 전부 이 안에서 돌았다. Unity에서 GUI 버튼으로 하던 일을 글자로 시키는 것이라고 보면 된다. 자주 쓴 것만 정리한다.</p>
+<table>
+<tr><th>명령</th><th>뜻</th><th>이번 주 예</th></tr>
+<tr><td><code>cd 경로</code></td><td>폴더 이동</td><td><code>cd docker</code></td></tr>
+<tr><td><code>ls</code>, <code>ls -la</code></td><td>폴더 내용 보기. <code>-la</code>는 숨김 파일·권한까지</td><td><code>ls gradle/wrapper/</code></td></tr>
+<tr><td><code>cat 파일</code></td><td>파일 내용을 화면에 출력</td><td><code>cat .github/workflows/ci.yml</code></td></tr>
+<tr><td><code>mkdir -p a/b</code></td><td>폴더 만들기. <code>-p</code>는 중간 폴더까지 한 번에</td><td><code>mkdir -p .github/workflows</code></td></tr>
+<tr><td><code>code 파일</code></td><td>VS Code로 열기. 없는 파일이면 새 파일</td><td><code>code .github/workflows/ci.yml</code></td></tr>
+<tr><td><code>A &amp;&amp; B</code></td><td>A가 성공하면 B 실행. A가 실패하면 B는 건너뜀</td><td><code>git commit ... &amp;&amp; git push ...</code></td></tr>
+<tr><td><code>A | B</code></td><td>A의 출력을 B의 입력으로 넘김</td><td><code>docker compose logs mysql | grep ready</code></td></tr>
+<tr><td><code>grep 문자열</code></td><td>입력에서 문자열이 있는 줄만 골라냄</td><td>위 예</td></tr>
+<tr><td><code>brew install X</code></td><td>맥 패키지 관리자 Homebrew로 설치</td><td><code>brew install gradle</code>, <code>gh</code></td></tr>
+<tr><td>위 화살표</td><td>직전 명령 다시 불러오기</td><td>실패한 <code>gh pr create</code> 재실행</td></tr>
+<tr><td>Ctrl+C</td><td>지금 도는 명령 중단</td><td><code>gh pr checks --watch</code> 빠져나오기</td></tr>
+</table>
+<p class="small">헷갈릴 때 기준: 경로에서 <code>.</code>은 현재 폴더, <code>..</code>은 상위 폴더, <code>~</code>는 홈 폴더(<code>/Users/dreadwitch</code>). <code>./gradlew</code>의 <code>./</code>는 "현재 폴더에 있는 gradlew를 실행"이라는 뜻이다.</p>
+
+<h2>2. JDK와 Java 용어 <span class="tag m">필수</span></h2>
+<p>C#에서 .NET SDK와 런타임이 있듯, Java에는 JDK와 JVM이 있다.</p>
+<table>
+<tr><th>용어</th><th>뜻</th><th>C# 대응</th></tr>
+<tr><td>JVM</td><td>컴파일된 Java 프로그램(<code>.class</code>)을 실행하는 가상 머신</td><td>.NET 런타임(CLR)</td></tr>
+<tr><td>JDK</td><td>JVM + 컴파일러(<code>javac</code>) + 도구. 개발할 때 설치하는 것</td><td>.NET SDK</td></tr>
+<tr><td>Temurin</td><td>JDK를 만드는 배포판 이름 중 하나(Eclipse 재단). 우리가 설치한 것</td><td>—</td></tr>
+<tr><td>21 LTS</td><td>장기 지원 버전. 이 프로젝트가 고정한 Java 버전</td><td>.NET 8 LTS 같은 것</td></tr>
+<tr><td><code>JAVA_HOME</code></td><td>"어떤 JDK를 쓸지" 가리키는 환경변수. <code>~/.zshrc</code>에 21로 고정함</td><td>—</td></tr>
+<tr><td>toolchain</td><td><code>build.gradle.kts</code>에 적힌 "컴파일은 무조건 21로"라는 설정. <code>JAVA_HOME</code>이 26을 가리켜도 산출물은 21</td><td>csproj의 <code>&lt;TargetFramework&gt;</code></td></tr>
+</table>
+<div class="box"><b>이번 주 겪은 혼란.</b> <code>brew install gradle</code>이 JDK 26을 같이 깔았다. 그래서 두 가지가 생겼다. (1) <code>JAVA_HOME</code>은 "Gradle 자체를 띄우는 JVM"을 정한다. (2) toolchain은 "내 코드를 컴파일·테스트하는 JDK"를 정한다. 둘은 다른 것이고, 코드 산출물에 중요한 건 (2)다.</div>
+
+<h2>3. Gradle <span class="tag m">필수</span></h2>
+<p>Gradle은 빌드 도구다. "소스를 컴파일하고, 테스트를 돌리고, 실행 파일을 만들어라"를 대신 해 준다. C#에서는 Visual Studio나 <code>dotnet build</code>가 csproj를 읽고 이 일을 했다.</p>
+
+<h3>3.1 프로젝트 파일들</h3>
+<table>
+<tr><th>파일</th><th>역할</th><th>C# 대응</th></tr>
+<tr><td><code>settings.gradle.kts</code></td><td>이 프로젝트 이름과 하위 모듈 목록. 우리는 <code>app</code> 하나</td><td><code>.sln</code></td></tr>
+<tr><td><code>app/build.gradle.kts</code></td><td>이 모듈의 빌드 설정. 플러그인, 의존성, toolchain, 실행 클래스</td><td><code>.csproj</code></td></tr>
+<tr><td><code>gradle/libs.versions.toml</code></td><td>의존성 이름과 버전을 한곳에 모아 둔 목록</td><td><code>Directory.Packages.props</code></td></tr>
+<tr><td><code>gradle.properties</code></td><td>Gradle 동작 옵션(메모리 등)</td><td>—</td></tr>
+<tr><td><code>gradlew</code>, <code>gradlew.bat</code>, <code>gradle/wrapper/*</code></td><td><b>wrapper.</b> 아래 3.2</td><td>Unity Hub + ProjectVersion.txt</td></tr>
+<tr><td><code>app/src/main/java/...</code></td><td>실제 코드</td><td><code>Assets/Scripts</code></td></tr>
+<tr><td><code>app/src/test/java/...</code></td><td>테스트 코드</td><td>테스트 프로젝트</td></tr>
+<tr><td><code>app/build/</code></td><td>빌드 결과물. git에 넣지 않음(.gitignore)</td><td><code>bin/</code>, <code>obj/</code></td></tr>
+</table>
+<p class="small"><code>.kts</code>는 Kotlin 문법으로 쓴 설정 파일이라는 뜻이다. Groovy 문법(<code>.gradle</code>)도 있는데 우리는 Kotlin DSL을 골랐다. 문법을 외울 필요는 없고 "설정 파일이 코드처럼 생겼다" 정도만 알면 된다.</p>
+
+<h3>3.2 wrapper <span class="tag m">필수</span></h3>
+<p>wrapper는 <b>gradle 본체가 아니라 "정해진 버전의 gradle을 내려받아 실행해 주는 작은 실행기"</b>다. 프로젝트에 같이 commit된다. 네 파일이다.</p>
+<ul>
+<li><code>gradlew</code>: 맥·리눅스용 실행 스크립트. 우리가 치는 <code>./gradlew</code>가 이것</li>
+<li><code>gradlew.bat</code>: 윈도우용. 같은 일</li>
+<li><code>gradle/wrapper/gradle-wrapper.jar</code>: 실제로 다운로드·실행하는 작은 자바 프로그램</li>
+<li><code>gradle/wrapper/gradle-wrapper.properties</code>: 어느 버전을 어디서 받을지. 우리는 <code>gradle-9.7.1-bin.zip</code></li>
+</ul>
+<p><code>./gradlew build</code>를 치면: 스크립트가 jar 실행 → jar가 properties를 읽음 → <code>~/.gradle/wrapper/dists/</code>에 9.7.1이 있으면 쓰고 없으면 다운로드 → 그 gradle에 <code>build</code>를 넘김.</p>
+<div class="box"><b>왜 중요한가.</b> 팀원마다, CI 러너마다 gradle 버전이 달라도 <code>./gradlew</code>만 치면 모두 9.7.1로 빌드한다. 그래서 CI 워크플로에 "gradle 설치"가 없다. 로그의 <code>Downloading .../gradle-9.7.1-bin.zip</code> 줄이 그 증거였다. 시스템에 <code>brew install gradle</code>로 깐 gradle은 <code>gradle init</code> 한 번에만 쓰고 그 뒤로는 쓰지 않는다.</div>
+
+<h3>3.3 태스크 <span class="tag m">필수</span></h3>
+<table>
+<tr><th>명령</th><th>하는 일</th></tr>
+<tr><td><code>./gradlew build</code></td><td>컴파일 + 테스트 + jar 생성. <b>테스트가 실패하면 build도 실패.</b> CI가 도는 명령</td></tr>
+<tr><td><code>./gradlew test</code></td><td>테스트만</td></tr>
+<tr><td><code>./gradlew run</code></td><td><code>application { mainClass }</code>에 적힌 클래스 실행</td></tr>
+<tr><td><code>./gradlew clean</code></td><td><code>build/</code> 폴더 삭제. "처음부터 다시"를 확인할 때 <code>clean build</code></td></tr>
+</table>
+<p>결과는 마지막 줄로 본다. <code>BUILD SUCCESSFUL</code> 또는 <code>BUILD FAILED</code>. 실패하면 그 위에 어느 태스크(<code>:app:test</code> 등)가 왜 실패했는지 나온다. 테스트 상세는 <code>app/build/reports/tests/test/index.html</code>.</p>
+
+<h3>3.4 JUnit <span class="tag o">알아두기</span></h3>
+<p>Java 테스트 프레임워크. C#의 NUnit/xUnit에 해당. <code>@Test</code>는 <code>[Test]</code> 어트리뷰트와 같고, <code>assertNotNull(...)</code>은 <code>Assert.NotNull(...)</code>이다. 지금은 샘플 테스트 1개(<code>AppTest.appHasAGreeting</code>)뿐이고, 이번 주에는 "테스트 파이프라인이 도는지 확인하는 용도"로만 썼다. 2주 차에 실제 테스트를 쓰기 시작한다.</p>
+
+<h2>4. Git <span class="tag m">필수</span></h2>
+<p>이번 주 가장 많이 실수한 곳이다. 그림 하나로 정리한다.</p>
+<pre>
+[작업 트리]  --add-->  [스테이지]  --commit-->  [로컬 저장소]  --push-->  [원격(GitHub)]
+ 내가 편집한 파일       사진에 넣을        찍힌 사진들            GitHub에 올라간
+                       파일 고르기        (commit 목록)          사진들
+</pre>
+<ul>
+<li><b>add = 고르기.</b> "이 파일을 다음 사진에 넣겠다."</li>
+<li><b>commit = 사진 찍기.</b> 고른 파일들의 현재 상태를 하나로 묶어 저장. 메시지를 붙인다.</li>
+<li><b>push = 사진 보내기.</b> 로컬에 쌓인 commit을 GitHub로. <b>commit 안 한 건 push되지 않는다.</b> 이번 주 두 번 겪었다.</li>
+</ul>
+
+<h3>4.1 <code>git status --short</code> 읽기 <span class="tag m">필수</span></h3>
+<table>
+<tr><th>표시</th><th>뜻</th><th>다음 할 일</th></tr>
+<tr><td><code>??</code> 파일</td><td>git이 모르는 새 파일</td><td><code>git add</code></td></tr>
+<tr><td>빨간 <code> M</code> (오른쪽 열)</td><td>수정했지만 아직 고르지 않음</td><td><code>git add</code></td></tr>
+<tr><td>초록 <code>M </code> 또는 <code>A </code> (왼쪽 열)</td><td>골라 둠. commit 대기</td><td><code>git commit</code></td></tr>
+<tr><td>아무것도 없음</td><td>깨끗함. 작업 트리 = 마지막 commit</td><td>—</td></tr>
+</table>
+
+<h3>4.2 매일 쓰는 명령</h3>
+<table>
+<tr><th>명령</th><th>뜻</th></tr>
+<tr><td><code>git status --short</code></td><td>지금 뭐가 바뀌었나. <b>모든 git 작업 전후에 친다</b></td></tr>
+<tr><td><code>git add 파일</code></td><td>고르기</td></tr>
+<tr><td><code>git commit -m "메시지"</code></td><td>사진 찍기. 메시지는 <code>BE-002: ...</code> 또는 <code>docs: ...</code> 형식</td></tr>
+<tr><td><code>git push origin 브랜치</code></td><td>보내기. 새 브랜치 첫 push는 <code>-u</code> 붙임</td></tr>
+<tr><td><code>git log --oneline -3</code></td><td>최근 commit 3개 한 줄씩</td></tr>
+<tr><td><code>git log origin/브랜치 --oneline -1</code></td><td>원격에 올라간 마지막 commit. push 확인용</td></tr>
+<tr><td><code>git diff</code></td><td>add 전 변경 내용. <code>--cached</code>를 붙이면 add 후 내용</td></tr>
+<tr><td><code>git switch -c 브랜치</code></td><td>새 브랜치 만들고 이동. 티켓마다 하나</td></tr>
+<tr><td><code>git switch main</code></td><td>main으로 이동</td></tr>
+<tr><td><code>git pull</code></td><td>원격의 새 commit을 가져와 합침. 병합 후 main에서</td></tr>
+<tr><td><code>git revert HEAD --no-edit</code></td><td>마지막 commit을 "취소하는 새 commit" 생성. 이력이 남음</td></tr>
+</table>
+
+<h3>4.3 용어</h3>
+<ul>
+<li><b>브랜치</b>: commit 줄기의 이름. <code>main</code>은 기준 줄기, <code>BE-001A</code>는 티켓 작업 줄기. Unity로 치면 씬을 복제해서 실험하는 것과 비슷하되, 나중에 합칠 수 있다.</li>
+<li><b>origin</b>: 원격 저장소의 별명. <code>origin/main</code>은 "마지막으로 GitHub와 통신했을 때 본 원격 main".</li>
+<li><b>HEAD</b>: 지금 내가 서 있는 commit. 보통 현재 브랜치의 마지막 commit.</li>
+<li><b>merge</b>: 브랜치를 main에 합치기. 우리는 <b>일반 merge</b>(commit 이력 보존)를 쓴다. squash는 여러 commit을 하나로 뭉치는데, 기록이 해시를 증거로 쓰므로 안 쓴다.</li>
+<li><b>revert vs reset</b>: revert는 취소 commit을 추가(안전, 이력 남음). reset은 이력을 지움(이번 주 안 씀, 당분간 쓰지 말 것).</li>
+</ul>
+
+<h2>5. GitHub와 gh <span class="tag m">필수</span></h2>
+<p>Git은 내 컴퓨터의 도구, GitHub는 그 저장소를 올려 두는 웹 서비스다. <code>gh</code>는 GitHub를 터미널에서 다루는 명령어(GitHub CLI)다. 웹에서 클릭으로 하는 일을 글자로 한다.</p>
+<h3>5.1 PR(Pull Request)</h3>
+<p>"내 브랜치를 main에 합쳐 달라"는 요청서. 코드 차이(diff), 설명, 리뷰 댓글, CI 결과가 한 화면에 모인다. 이번 주 PR #1(BE-001), PR #2(BE-001A)를 열었다. PR 설명은 <code>docs/pr/티켓.md</code>에 네 항목으로 쓴다: ① 구현 내용 ② 설계 결정과 이유 ③ 테스트 방법과 결과 ④ 한계와 확인받고 싶은 것.</p>
+<div class="box"><b>PR 설명에서 두 번 지적받은 것.</b> "AI 안내에 따라 했다"는 이유가 아니다. 리뷰어가 알고 싶은 것은 <b>내가 왜 이렇게 골랐는지</b>와 <b>실제로 돌린 명령과 그 출력</b>이다. 파일 경로, 명령, 출력 한 줄 인용이 있으면 통과한다.</div>
+<h3>5.2 gh 명령</h3>
+<table>
+<tr><th>명령</th><th>뜻</th></tr>
+<tr><td><code>gh auth login</code></td><td>로그인(1회 완료)</td></tr>
+<tr><td><code>gh pr create --base main --head 브랜치 --title "..." --body "..."</code></td><td>PR 열기. 옵션 없이 치면 대화형으로 물어봄</td></tr>
+<tr><td><code>gh pr checks --watch</code></td><td>이 브랜치 PR의 CI 결과를 실시간으로. push 직후엔 몇 초 기다렸다가</td></tr>
+<tr><td><code>gh pr view 번호</code></td><td>PR 내용 보기. <code>--web</code>이면 브라우저로</td></tr>
+<tr><td><code>gh pr merge 번호 --merge --delete-branch</code></td><td>일반 merge로 병합하고 브랜치 정리. 로컬은 main으로 돌아옴</td></tr>
+<tr><td><code>gh run list</code>, <code>gh run view ID --log</code></td><td>CI 실행 목록과 로그</td></tr>
+</table>
+
+<h2>6. GitHub Actions와 CI <span class="tag m">필수</span></h2>
+<p><b>CI(Continuous Integration)</b>: 코드를 올릴 때마다 <b>자동으로</b> 빌드·테스트해서 깨졌는지 확인하는 장치. Unity Cloud Build와 같은 개념. <b>GitHub Actions</b>는 그걸 돌려 주는 GitHub의 서비스.</p>
+<h3>6.1 워크플로 파일 한 줄씩</h3>
+<pre><code>name: CI                       # 이 지시서의 이름. PR 화면에 표시
+
+on:                            # 언제 돌릴지
+  push:
+    branches: ["main"]         # main에 commit이 올라오면
+  pull_request:
+    branches: ["main"]         # main을 향한 PR이 열리거나 갱신되면
+
+jobs:                          # 무엇을 돌릴지
+  build:                       # 잡 이름(자유). Ruleset에서 이 이름을 검사 항목으로 씀
+    runs-on: ubuntu-latest     # 우분투 리눅스 컴퓨터를 빌려서
+    steps:                     # 순서대로
+      - uses: actions/checkout@v6         # 1) 저장소 내려받기 (남이 만든 기능 = uses)
+      - uses: actions/setup-java@v5       # 2) JDK 설치
+        with:                             #    그 기능에 넘기는 옵션
+          java-version: '21'
+          distribution: 'temurin'
+      - run: ./gradlew build              # 3) 명령 직접 실행 (= run)</code></pre>
+<ul>
+<li><b>러너</b>: 매번 새로 빌리는 깨끗한 컴퓨터. 내 맥에 깐 건 거기 없다. 그래서 JDK는 설치하고, gradle은 wrapper가 받아 오니 안 깐다.</li>
+<li><b>uses vs run</b>: <code>uses</code>는 GitHub 마켓의 기성 기능(액션)을 가져다 씀. <code>run</code>은 터미널 명령을 그대로 침.</li>
+<li><b><code>@v5</code></b>: 액션의 버전. 한국어 문서는 <code>@v4</code>였는데 실행해 보니 deprecated 경고가 떠서 v5로 올렸다. <b>문서보다 실제 실행 결과를 믿는다.</b></li>
+</ul>
+<h3>6.2 언제 도는가</h3>
+<table>
+<tr><th>상황</th><th>CI</th><th>이유</th></tr>
+<tr><td>PR 없이 작업 브랜치에 push</td><td>안 돔</td><td><code>on</code>의 두 조건 모두 해당 없음</td></tr>
+<tr><td>main 대상 PR 열기</td><td>돔</td><td><code>pull_request</code></td></tr>
+<tr><td>PR 열린 상태에서 그 브랜치에 push</td><td>돔</td><td>PR이 갱신되어 <code>pull_request</code> 다시 발생</td></tr>
+<tr><td>PR 병합</td><td>돔</td><td>main에 commit 생김 → <code>push</code></td></tr>
+</table>
+<h3>6.3 Ruleset(브랜치 보호) <span class="tag m">필수</span></h3>
+<p>CI는 결과를 <b>보여 줄 뿐</b> 막지는 않는다. 막으려면 저장소 설정(Settings → Rules → Rulesets)에서 규칙을 건다. 우리 <code>main 보호</code> 규칙: (1) PR을 통해서만 main에 합칠 수 있다 (2) <code>build</code> 검사가 통과해야 합칠 수 있다 (3) main 삭제 금지 (4) 강제 push 금지. 처음 만들 때 "대상 브랜치"를 안 넣어서 아무 데도 안 걸린 상태였다. 규칙은 "무엇을"과 "어디에" 둘 다 있어야 한다.</p>
+<div class="box"><b>이번 주 실험의 의미.</b> 초록불만 봐서는 CI가 일하는지 모른다. 테스트를 일부러 깨뜨려 push → 빨간불 → revert → 초록불. 이 세 번이 "실패를 잡는다"는 증거다. 앞으로 어떤 자동화든 <b>일부러 실패시켜 보는 것</b>이 검증 방법이다.</div>
+
+<h2>7. YAML <span class="tag m">필수</span></h2>
+<p><code>docker-compose.yml</code>과 <code>ci.yml</code> 둘 다 YAML이다. 앞으로 Spring 설정(<code>application.yml</code>)도 YAML이다. 규칙은 넷뿐이다.</p>
+<ol>
+<li><b>맵(키: 값)</b>: <code>name: CI</code>. 콜론 뒤 공백 필수. 콜론 앞엔 공백 없이.</li>
+<li><b>중첩은 들여쓰기</b>: 스페이스 2칸씩. <b>탭 금지.</b> 같은 깊이는 같은 칸수.</li>
+<li><b>리스트</b>: <code>- 항목</code>. <code>steps:</code> 아래 각 스텝, <code>branches: ["main"]</code>의 대괄호도 리스트.</li>
+<li><b>문자열 따옴표</b>: 보통 생략 가능. 숫자처럼 보이는 걸 문자열로 두고 싶으면 <code>'21'</code>처럼 감싼다.</li>
+</ol>
+<p>이번 주 오류는 전부 "맵이어야 할 곳에 리스트" 또는 "들여쓰기 한 칸 차이"였다. 오류 메시지의 <code>must be a mapping</code>은 "여기 맵이 와야 한다", <code>must be a array</code>는 "여기 리스트가 와야 한다"는 뜻이다.</p>
+
+<h2>8. Docker와 Compose <span class="tag o">알아두기</span></h2>
+<p>개념은 <code>docker-1단계-개념.html</code>에 있으니 여기서는 명령만 적는다. 2주 차 이후 MySQL이 필요할 때 다시 쓴다.</p>
+<table>
+<tr><th>명령 (<code>docker/</code> 폴더에서)</th><th>뜻</th></tr>
+<tr><td><code>docker compose up -d</code></td><td>컨테이너 기동(백그라운드). 재기동도 이것</td></tr>
+<tr><td><code>docker compose ps</code></td><td>상태 확인</td></tr>
+<tr><td><code>docker compose logs mysql</code></td><td>로그. <code>ready for connections</code>가 보이면 준비됨</td></tr>
+<tr><td><code>docker compose down</code></td><td>컨테이너 종료·삭제. 볼륨(데이터)은 남음</td></tr>
+<tr><td><code>docker compose config</code></td><td>yml 문법 검사</td></tr>
+</table>
+<p class="small">비밀번호는 <code>docker/.env</code>에 있고 git에 올라가지 않는다(.gitignore). 흐름: <code>.env</code> → compose가 <code>${VAR}</code>를 치환 → 컨테이너 환경변수 → MySQL 첫 초기화 때 사용.</p>
+
+<h2>9. 프로젝트 운영 파일 <span class="tag o">알아두기</span></h2>
+<table>
+<tr><th>파일</th><th>누가 쓰나</th><th>언제</th></tr>
+<tr><td><code>LEARNING_STATE.md</code></td><td>튜터가 갱신, 학습자가 읽음</td><td>매 세션 시작·종료. "지금 어디까지 왔나"</td></tr>
+<tr><td><code>VERSIONS.md</code></td><td>튜터·학습자</td><td>버전 고정 근거. 왜 Java 21, MySQL 9.7인지</td></tr>
+<tr><td><code>docs/notes/날짜.md</code></td><td>학습자</td><td>매일 종료 시. 7개 항목</td></tr>
+<tr><td><code>docs/pr/티켓.md</code></td><td>학습자</td><td>PR 열 때. 4개 항목</td></tr>
+<tr><td><code>docs/reviews/티켓-review.md</code></td><td>Reviewer</td><td>PR 리뷰. 반영 요청 표</td></tr>
+</table>
+
+<h2>10. 우선순위 정리</h2>
+<div class="box must"><b>다음 주 월요일까지 손에 익혀야 하는 것 (외우기가 아니라, 보지 않고 칠 수 있게).</b>
+<ol>
+<li><code>git status --short</code> → <code>git add</code> → <code>git commit -m</code> → <code>git push</code>. 그리고 status 색 읽기.</li>
+<li><code>git switch -c 브랜치</code>로 시작해서 <code>gh pr create</code> → <code>gh pr checks --watch</code> → <code>gh pr merge --merge</code>로 끝나는 티켓 한 바퀴.</li>
+<li><code>./gradlew build</code> 결과 마지막 줄 읽기. 실패하면 어느 태스크가 왜 실패했는지 찾기.</li>
+<li>YAML 들여쓰기 규칙 넷.</li>
+</ol></div>
+<div class="box"><b>설명할 수 있으면 되는 것.</b> wrapper가 뭔지와 왜 CI에 gradle 설치가 없는지. toolchain과 JAVA_HOME의 차이. CI가 언제 도는지(6.2 표). Ruleset이 CI와 어떻게 다른지.</div>
+<div class="box"><b>지금은 몰라도 되는 것.</b> Kotlin DSL 문법, JUnit 상세, Docker 내부 구조, gradle 캐시·concurrency 같은 CI 최적화, git reset/rebase.</div>
+
+<h2 class="q">확인 질문 (답을 적은 뒤 튜터에게 보여 준다)</h2>
+<div class="q"><ol>
+<li><code>git status --short</code>에서 빨간 <code>M</code>과 초록 <code>M</code>의 차이는? 각각 다음에 칠 명령은?<div class="memo"></div></li>
+<li>commit 없이 push하면 무슨 일이 생기나? 터미널에 뭐라고 나오나?<div class="memo"></div></li>
+<li><code>./gradlew build</code>를 쳤을 때 gradle이 컴퓨터에 없으면 어떻게 되나? 어느 파일이 관여하나?<div class="memo"></div></li>
+<li>CI 워크플로에 JDK 설치는 있는데 gradle 설치는 없다. 이유는?<div class="memo"></div></li>
+<li>작업 브랜치에 push했는데 CI가 안 돌았다. 고장인가? 언제 도는가?<div class="memo"></div></li>
+<li>CI가 빨간불인데 Merge 버튼이 눌린다. 무엇이 빠진 것인가?<div class="memo"></div></li>
+<li><code>JAVA_HOME</code>이 JDK 26을 가리키는데 산출물은 21로 나온다. 무엇이 그렇게 만드나?<div class="memo"></div></li>
+<li>YAML에서 <code>must be a mapping</code> 오류가 났다. 무엇을 확인하나?<div class="memo"></div></li>
+<li>squash merge를 안 쓰기로 한 이유는?<div class="memo"></div></li>
+<li>PR 설명 ②에 "AI 안내대로 했다"고 쓰면 왜 부족한가? 무엇을 써야 하나?<div class="memo"></div></li>
+</ol></div>
+
+</body>
+</html>
