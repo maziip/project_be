@@ -1,8 +1,8 @@
 # Learning State
 
-- 마지막 갱신: 2026-09-10 (세션 종료, 3일차. PR #1 병합 완료. BE-001A CI·병합 보호 완료, PR #2는 설명 보강 전이라 미병합)
-- 현재 주차: 1주 차 (3일차 종료)
-- 진행 중 티켓: BE-001A (PR #2 열림, 리뷰 반영·병합 남음), 다음 BE-002
+- 마지막 갱신: 2026-09-11 (세션 종료, 4일차. BE-002 도메인·테스트 완료, PR #3 열림. PR #2·#3 모두 미병합)
+- 현재 주차: 1주 차 (4일차 종료)
+- 진행 중 티켓: BE-002 (PR #3 열림, PR 설명 문서·리뷰·병합 남음). BE-001A (PR #2 열림, 학습자가 주말에 gradle·gh·Actions를 스스로 정리한 뒤 PR 설명 보강·병합). 다음 BE-003
 - 현재 월별 관문 상태: 미진행
 
 ## 시작 전 준비 점검표
@@ -76,7 +76,7 @@
 
 ## 커리큘럼 변경 제안
 
-- 없음
+- (2026-09-11, 학습자 결정 대기) 1주 차 금요일 평가("AI 없이 90분 메시지 도메인 구현")를 2026-09-18(금)로 이동. 근거: 시작 전 준비가 9/8~9/9 오전까지, BE-001·BE-001A가 9/9~9/10을 차지해 9/11 시점에 Java 코드 0줄. 1주 차를 9/9~9/17로 보고 BE-002·BE-003을 다음 주 수요일까지 진행. 이후 주차는 하루~이틀씩 뒤로 밀림. 튜터 요일 착오(9/10을 수요일로 말함, 실제 목요일)도 원인의 일부
 
 ## BE-001 계획 (학습자 동의, 2026-09-08)
 
@@ -112,6 +112,17 @@
 - "AI 답변을 검증한 방법"은 "무엇을 어떻게 돌려서 무엇을 봤다" 형태의 구체 행동 하나로 쓴다
 - PR 병합은 일반 merge. LEARNING_STATE와 리뷰 기록이 commit 해시를 증거로 가리키므로 squash하지 않는다
 
+## BE-002 진행 기록 (2026-09-11)
+
+- 브랜치 `BE-002`(BE-001A에서 분기. PR #2 미병합 상태라 PR을 열면 BE-001A commit이 함께 보임. #2 병합 후 자동으로 줄어듦)
+- 접근: C#으로 먼저 스케치(학습자) → Java로 변환. 1차 스케치는 게임 채팅방(userList, 귓속말) → 도메인 정정(주인 1명, role enum USER/ASSISTANT). 2차 스케치에서 `Message(role, content)` 생성자 안에서 createdAt 찍는 결정(학습자)
+- `Message`: `private final` role/createdAt/content, getter 3개, 중첩 enum `Role`. 겪은 오류: package 선언 누락 → 기본 패키지로 컴파일됨(`build/classes/java/main/Message.class`에 떨어진 것으로 확인). `public` 필드·`final` 누락을 3회에 걸쳐 수정. getter를 C# 관례 `GetRole`로 씀 → camelCase 정정
+- `ChatRoom`: id/ownerId/createdAt `final`, status는 `archive()`로만 변경, `messages`는 `List.copyOf`로 반환(우회 방지). 겪은 오류: `new ArrayList()` raw type 경고 → `<Message>` 명시
+- 테스트: `MessageTest` 1개, `ChatRoomTest` 4개(newRoomIsActiveAndEmpty, addMessageKeepsOrder, archiveChangesStatus, messagesCannotBeModifiedFromOutside). 총 6개 통과. 겪은 오류: 파일을 `ChatRoomTest`(확장자 없음)로 저장 → Gradle이 무시하고 BUILD SUCCESSFUL → "성공 = 내 테스트가 돌았다"가 아님을 확인. 이후 ` */` 잔여 주석, package 누락 컴파일 오류 → 첫 오류만 고치고 재실행하는 원칙 설명
+- assertEquals 인자 순서(기대, 실제) 정정. 고친 줄을 추가만 하고 옛 줄을 안 지운 것 → `git commit --amend` 첫 사용(commit 91fc679)
+- 학습자 질문: "build가 방금 만든 파일도 빌드하나"(→ src 아래 전부 자동), "archive가 뭔가"(→ 보관 상태, setter 대신 동작 이름으로 상태 변화를 제한)
+- commit: 91fc679(Message + 테스트), d979b20(ChatRoom + 테스트 4개). PR #3 https://github.com/maziip/project_be/pull/3 (BE-001A commit 포함 상태, #2 병합 후 해소)
+
 ## 다음 행동
 
 1. (완료) gh CLI 설치, 로그인, 첫 commit push.
@@ -120,11 +131,12 @@
 4. (완료) LLM API: Claude / 월 $20 / 80% Mock 전환. 계정·키 발급·한도 설정은 5주 차 직전(4주 차 금요일)에 수행.
 5. (완료) Docker 자기점검 재확인, BE-001 골격·리뷰 반영·PR 설명.
 6. (완료) 일일 기록 빈칸, PR 설명 오타, PR #1 일반 merge, BE-001A CI 파일·실행 3회·Ruleset.
-7. 다음 세션(2026-09-11) 순서:
-   1. 학습자에게 ④ 질문의 의도 한 줄 확인. 어제 이해 못 했다고 한 부분이 무엇인지 확인(후보: 워크플로 파일 각 줄, PR 이벤트가 다시 도는 이유, Ruleset과 CI의 관계, wrapper)
-   2. 그 부분을 짧게 다시 설명하고 학습자가 본인 말로 되말하기
-   3. `docs/pr/BE-001A.md` ①~④를 리뷰대로 보강(본인 문장). `docs/reviews/BE-001A-review.md`와 함께 commit·push
-   4. CI 초록 확인 후 PR #2 일반 merge. 로컬 main 동기화
-   5. `docs/notes/2026-09-10.md` 빈칸 채우기
-   6. BE-002 착수 전 커리큘럼 1주 차 BE-002 조건 확인. 21:00 이후 새 단계 착수 제안 안 함
-   7. 보조자료 `docs/notes/1주차-도구-개념-정리.html/.pdf`(2026-09-10 밤 작성, 학습자 요청 "따라 하긴 했는데 익히지 못했다"). 끝의 확인 질문 10개를 학습자가 답한 뒤 튜터가 확인. 필수 항목: git add/commit/push 루프, 티켓 한 바퀴(gh), gradlew build 결과 읽기, YAML 규칙 4개
+7. (부분 완료) 2026-09-11: 1·2번(이해 확인, PR #2 마무리)은 학습자 요청으로 주말 자습 후로 연기. BE-002 완료.
+8. 주말(선택): 학습자 자습 — gradle 필요성, gh, GitHub Actions. 보조자료 `docs/notes/1주차-도구-개념-정리.pdf` 확인 질문 10개
+9. 다음 세션(2026-09-14 월) 순서:
+   1. 평가 이동 제안(9/18) 결정 확인. 주말 자습 결과: 확인 질문 답 검토, 어디가 아직 막히는지 확인
+   2. PR #2(BE-001A): `docs/pr/BE-001A.md` 리뷰대로 보강 → 리뷰 파일과 함께 commit → CI 초록 → 일반 merge
+   3. PR #3(BE-002): #2 병합 후 diff 축소 확인 → `docs/pr/BE-002.md` 작성(①~④, 테스트 6개 증거) → Reviewer 리뷰 → 반영 → merge
+   4. `docs/notes/2026-09-11.md` 빈칸 채우기
+   5. BE-003 착수: 메시지 길이·역할·생성 시각 규칙을 값 객체와 테스트로. 시작 전 질문: "지금 Message에 빈 내용이나 10만 자를 넣으면 어떻게 되나"
+   6. 1주 차 필수 학습 중 미착수: 컬렉션·제네릭, 예외 처리, Stream/Optional, equals/hashCode, checked/unchecked. BE-003과 엮어 진행. 21:00 이후 새 단계 착수 제안 안 함
